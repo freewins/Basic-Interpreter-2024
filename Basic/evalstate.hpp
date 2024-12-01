@@ -5,7 +5,7 @@
  * of additional information required by the evaluator, most notably
  * the values of variables.
  */
-
+//绑定变量 查看变量是否已经被定义
 #ifndef _evalstate_h
 #define _evalstate_h
 

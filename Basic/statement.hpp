@@ -14,6 +14,8 @@
 
 #include <string>
 #include <sstream>
+#include <pstl/glue_execution_defs.h>
+
 #include "evalstate.hpp"
 #include "exp.hpp"
 #include "Utils/tokenScanner.hpp"
@@ -85,4 +87,79 @@ public:
  * specify its own destructor method to free that memory.
  */
 
+
+class REM:public Statement {
+ //感觉这里不需要写什么类似 注释内容的存储，在运行的时候会直接把这里跳过
+public:
+ void execute(EvalState &state, Program &program) override {
+
+ }
+};
+class LET:public Statement {
+public:
+ Expression *ex ;
+ void execute(EvalState &state, Program &program) override {
+  //
+  ex->eval(state);
+
+ }
+};
+
+class PRINT:public Statement {
+public:
+ void execute(EvalState &state, Program &program) override {
+  std::cout<<"\n"<<exp->eval(state);
+ }
+ Expression *exp;
+};
+class INPUT:public Statement {
+ //后检测操作 只在执行的时候检测语法错误
+
+public:
+ std::string name;
+ void execute(EvalState &state, Program &program) override {
+
+  int temp;
+  if(state.isDefined(name)) {
+    std::cout<<"\n ?";
+    if(std::cin>>temp) {
+     state.setValue(name ,temp);
+
+    }
+   else {
+    error("INVALID NUMBER");
+   }
+  }
+  else {
+   error("VARIABLE NOT DEFINED");
+  }
+ }
+
+};
+class END:public Statement {
+public:
+void execute(EvalState &state, Program &program) override {
+ return;
+}
+};
+class GOTO:public Statement {
+public:
+ //下一个跳转的行数
+ //除了最开始的检查，刚进入程序的时候也要进行检查
+ int next_pos;
+ void execute(EvalState &state, Program &program) override {
+
+ }
+};
+class IF:public Statement {
+public:
+ void execute(EvalState &state, Program &program) override {
+
+ }
+ Expression *lep,*rep;
+ int goto_pos;
+};
+class THEN:public Statement {
+
+};
 #endif

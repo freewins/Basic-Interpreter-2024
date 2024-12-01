@@ -87,6 +87,7 @@ public:
  * Sets the token stream for this scanner to the specified string or
  * input stream.  Any previous token stream is discarded.
  */
+//这里是用来设定输入流 但是目前还有没有什么想法
 
     void setInput(std::string str);
 
@@ -99,6 +100,7 @@ public:
  * Returns <code>true</code> if there are additional tokens for this
  * scanner to read.
  */
+ //用来控制不断接受新的token 用于判断，返回true or  false 
 
     bool hasMoreTokens();
 
@@ -121,7 +123,7 @@ public:
  * the saved token without reading any additional characters from the
  * token stream.
  */
-
+//用来保存指令
     void saveToken(std::string token);
 
 /*
@@ -133,6 +135,7 @@ public:
  * to the beginning of the saved token.  If <code>saveToken</code> is
  * called more than once, <code>getPosition</code> returns -1.
  */
+ //个人理解来说就是看当前读到哪一条指令，如果读完了这条指令，就返回-1
 
     int getPosition() const;
 
@@ -152,7 +155,7 @@ public:
  *
  * changes this behavior so that the scanner ignore whitespace characters.
  */
-
+//忽略空格
     void ignoreWhitespace();
 
 /*
@@ -169,7 +172,7 @@ public:
  *
  * sets the parser to ignore comments.
  */
-
+//忽略注释
     void ignoreComments();
 
 /*
@@ -294,7 +297,8 @@ public:
  * any surrounding quotation marks and replacing escape sequences by the
  * appropriate characters.
  */
-
+//这个用来获得不同的进制下的数字或者是转义字符的表达
+// 077 是八进制 x88 是16进制 而\a \b ... 是转义字符
     std::string getStringValue(std::string token) const;
 
 /* Private section */

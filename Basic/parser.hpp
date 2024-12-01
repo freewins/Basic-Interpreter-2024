@@ -3,7 +3,7 @@
  * --------------
  * This file acts as the interface to the parser module.
  */
-
+//语法检查
 #ifndef _parser_h
 #define _parser_h
 

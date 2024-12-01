@@ -5,7 +5,6 @@
  * which allows the client to represent and manipulate simple
  * binary expression trees.
  */
-
 #ifndef _exp_h
 #define _exp_h
 

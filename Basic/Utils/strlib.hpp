@@ -4,7 +4,7 @@
  * This file exports several useful string functions that are not
  * included in the C++ string library.
  */
-
+//感觉这个头文件里面所有都是用来对string做操作的
 #ifndef _strlib_h
 #define _strlib_h
 

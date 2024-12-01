@@ -147,6 +147,10 @@ private:
 
     // Fill this in with whatever types and instance variables you need
     //todo
+  //用map来存储指令 确保有序
+  std::map<int,Statement *> program_map_;
+  std::map<int,std::string> source_program_map_;
+
 };
 
 #endif

@@ -63,7 +63,7 @@ bool TokenScanner::hasMoreTokens() {
     saveToken(token);
     return (token != "");
 }
-
+//足以通过这一个函数来实现所有的指令阅读操作
 std::string TokenScanner::nextToken() {
     if (savedTokens != nullptr) {
         StringCell *cp = savedTokens;
@@ -126,6 +126,8 @@ void TokenScanner::saveToken(std::string token) {
     StringCell *cp = new StringCell;
     cp->str = token;
     cp->link = savedTokens;
+    ///DEBUG
+    //std::cout<<token<<std::endl;
     savedTokens = cp;
 }
 
