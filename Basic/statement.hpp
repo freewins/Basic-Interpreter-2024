@@ -37,42 +37,39 @@ class Program;
  */
 
 class Statement {
-
 public:
+  /*
+   * Constructor: Statement
+   * ----------------------
+   * The base class constructor is empty.  Each subclass must provide
+   * its own constructor.
+   */
 
-/*
- * Constructor: Statement
- * ----------------------
- * The base class constructor is empty.  Each subclass must provide
- * its own constructor.
- */
+  Statement();
 
-    Statement();
+  /*
+   * Destructor: ~Statement
+   * Usage: delete stmt;
+   * -------------------
+   * The destructor deallocates the storage for this expression.
+   * It must be declared virtual to ensure that the correct subclass
+   * destructor is called when deleting a statement.
+   */
 
-/*
- * Destructor: ~Statement
- * Usage: delete stmt;
- * -------------------
- * The destructor deallocates the storage for this expression.
- * It must be declared virtual to ensure that the correct subclass
- * destructor is called when deleting a statement.
- */
+  virtual ~Statement();
 
-    virtual ~Statement();
+  /*
+   * Method: execute
+   * Usage: stmt->execute(state);
+   * ----------------------------
+   * This method executes a BASIC statement.  Each of the subclasses
+   * defines its own execute method that implements the necessary
+   * operations.  As was true for the expression evaluator, this
+   * method takes an EvalState object for looking up variables or
+   * controlling the operation of the interpreter.
+   */
 
-/*
- * Method: execute
- * Usage: stmt->execute(state);
- * ----------------------------
- * This method executes a BASIC statement.  Each of the subclasses
- * defines its own execute method that implements the necessary
- * operations.  As was true for the expression evaluator, this
- * method takes an EvalState object for looking up variables or
- * controlling the operation of the interpreter.
- */
-
-    virtual void execute(EvalState &state, Program &program) = 0;
-
+  virtual void execute(EvalState &state, Program &program) = 0;
 };
 
 
@@ -87,79 +84,122 @@ public:
  * specify its own destructor method to free that memory.
  */
 
-
-class REM:public Statement {
- //感觉这里不需要写什么类似 注释内容的存储，在运行的时候会直接把这里跳过
+class LET : public Statement {
 public:
- void execute(EvalState &state, Program &program) override {
+  Expression *ex = nullptr;
 
- }
-};
-class LET:public Statement {
-public:
- Expression *ex ;
- void execute(EvalState &state, Program &program) override {
-  //
-  ex->eval(state);
-
- }
-};
-
-class PRINT:public Statement {
-public:
- void execute(EvalState &state, Program &program) override {
-  std::cout<<"\n"<<exp->eval(state);
- }
- Expression *exp;
-};
-class INPUT:public Statement {
- //后检测操作 只在执行的时候检测语法错误
-
-public:
- std::string name;
- void execute(EvalState &state, Program &program) override {
-
-  int temp;
-  if(state.isDefined(name)) {
-    std::cout<<"\n ?";
-    if(std::cin>>temp) {
-     state.setValue(name ,temp);
-
+  void execute(EvalState &state, Program &program) override {
+    //
+    ex->eval(state);
+  }
+  ~LET() {
+    if(ex!=nullptr){delete ex;
     }
-   else {
-    error("INVALID NUMBER");
-   }
   }
-  else {
-   error("VARIABLE NOT DEFINED");
+};
+
+class PRINT : public Statement {
+public:
+  Expression *exp;
+  void execute(EvalState &state, Program &program) override {
+    std::cout << exp->eval(state) << "\n";
   }
- }
+  ~PRINT() {
+    if(exp != nullptr){
+      delete exp;
+    }
+  }
+};
 
-};
-class END:public Statement {
+class INPUT : public Statement {
 public:
-void execute(EvalState &state, Program &program) override {
- return;
-}
-};
-class GOTO:public Statement {
-public:
- //下一个跳转的行数
- //除了最开始的检查，刚进入程序的时候也要进行检查
- int next_pos;
- void execute(EvalState &state, Program &program) override {
+  std::string name;
+  ~INPUT() {
+  }
+  void execute(EvalState &state, Program &program) override {
+    int temp = 0;
+    int cur = 1;
+    std::string rubbish;
+    //TODO
+    //添加一个变量名检索的工具
+    while(true) {
+      try {
+        std::cout << " ? ";
+        std::string line_;
+        getline(std::cin,line_);
+        int i = 0;
+        if(line_[i] == '-') {
+          cur = -1;
+          i++;
+        }
+        for(;i<line_.length();i++) {
 
- }
+          if(line_[i]>='0'&&line_[i]<='9') {
+            temp = temp *10 + (line_[i] - '0');
+          }
+          else {
+            error("INVALID NUMBER");
+          }
+        }
+        temp *= cur;
+        state.setValue(name, temp);
+        return;
+      }catch (ErrorException &ex) {
+        temp = 0;
+        std::cout << ex.getMessage() << std::endl;
+      }
+    }
+  }
 };
-class IF:public Statement {
-public:
- void execute(EvalState &state, Program &program) override {
+//这个可以删掉了
 
- }
- Expression *lep,*rep;
- int goto_pos;
+class IF : public Statement {
+public:
+  void execute(EvalState &state, Program &program) override {
+    int l = lep->eval(state);
+    int r = rep->eval(state);
+    if(cmp == '=') {
+      if(l == r) {
+        state.setValue("______if_next_position_________",goto_pos);
+
+      }
+      else {
+        return;
+      }
+    }
+    if(cmp == '>') {
+      if(l > r) {
+        state.setValue("______if_next_position_________",goto_pos);
+
+      }
+      else {
+        return;
+      }
+    }
+    if(cmp == '<') {
+      if(l < r) {
+        state.setValue("______if_next_position_________",goto_pos);
+      }
+      else {
+        return;
+      }
+    }
+  }
+
+  Expression *lep = nullptr, *rep = nullptr;
+  char cmp;
+  int goto_pos;
+  ~IF() {
+    if(lep != nullptr) {
+      delete lep;
+    }
+    if(rep != nullptr) {
+      delete rep;
+    }
+  }
 };
-class THEN:public Statement {
+
+class THEN : public Statement {
 
 };
 #endif

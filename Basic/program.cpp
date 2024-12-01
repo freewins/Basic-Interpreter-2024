@@ -20,11 +20,12 @@ void Program::clear() {
     // Replace this stub with your own code
     //todo
     source_program_map_.clear();
+
     //这里的内存要进行释放
     for(auto t = program_map_.begin();t!= program_map_.end(); ++t) {
         delete t->second;
-        program_map_.erase(t);
     }
+    program_map_.clear();
 }
 
 void Program::addSourceLine(int lineNumber, const std::string &line) {
